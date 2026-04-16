@@ -1,0 +1,49 @@
+# Зависимости
+node_modules/
+**/node_modules/
+
+# Результаты сборки (Vite и NestJS)
+dist/
+**/dist/
+build/
+**/build/
+.nest/
+
+# Логи и тесты
+*.log
+logs/
+**/logs/
+coverage/
+**/coverage/
+.nyc_output
+
+# Среды разработки (IDE)
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Храним секреты БД и JWT только локально!
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+!.env.example
+
+# Prisma
+# Игнорируем только генерируемый клиент, если он вне node_modules
+**/generated/prisma/
+
+# Vite / React
+.vite/
+*.local
+.eslintcache
+*.tsbuildinfo
+
+# OS файлы
+.DS_Store
+Thumbs.db

@@ -1,0 +1,34 @@
+{
+  "name": "deusvault",
+  "version": "1.0.0",
+  "description": "Веб-приложение для систематизации личных коллекций (DeusVault)",
+  "private": true,
+  "scripts": {
+    "prepare": "husky install",
+    "install:all": "npm install && npm install --prefix client && npm install --prefix server",
+    "dev": "concurrently \"npm --prefix client run dev\" \"npm --prefix server run start:dev\"",
+    "build": "npm --prefix client run build && npm --prefix server run build",
+    "lint-all": "npm --prefix client run lint && npm --prefix server run lint",
+    "format-all": "npm --prefix client run format && npm --prefix server run format",
+    "type-check-all": "npm --prefix client run type-check && npm --prefix server run type-check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DivarPG/DeusVault.git"
+  },
+  "author": "Бредихина А. С., Цехмистрова Д. А.",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "husky": "^8.0.0",
+    "lint-staged": "^16.4.0"
+  },
+  "lint-staged": {
+    "client/**/*.{ts,tsx,js,jsx}": [
+      "npm --prefix client run lint"
+    ],
+    "server/**/*.ts": [
+      "npm --prefix server run lint"
+    ]
+  }
+}
