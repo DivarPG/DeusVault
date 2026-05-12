@@ -19,9 +19,13 @@
   "author": "Бредихина А. С., Цехмистрова Д. А.",
   "license": "ISC",
   "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "bootstrap": "^5.3.8",
     "concurrently": "^8.2.2",
     "husky": "^8.0.0",
-    "lint-staged": "^16.4.0"
+    "lint-staged": "^16.4.0",
+    "react-bootstrap": "^2.10.10"
   },
   "lint-staged": {
     "client/**/*.{ts,tsx,js,jsx}": [
@@ -30,5 +34,9 @@
     "server/**/*.ts": [
       "npm --prefix server run lint"
     ]
+  },
+  "dependencies": {
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
   }
 }

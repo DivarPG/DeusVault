@@ -1,0 +1,103 @@
+.registration{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 95%;
+}
+
+
+@media (min-width: 768px) {
+    .registration {
+        width: 70%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .registration {
+        width: 40%;
+    }
+}
+
+.registrationTab{
+    margin-bottom: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+    border-radius: 15px 15px 0 0;
+    text-align: center;
+    width: fit-content;
+}
+
+.registrationTab h2{
+    font-size: 20px;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    margin-top: 5px;
+}
+
+.registrationCard{
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    border-radius: 0 15px 15px 15px;
+}
+
+.regLabels{
+    width: 100%;
+    padding-left: 5%;          /* симметричные отступы слева и справа */
+    box-sizing: border-box;  /* чтобы ширина не выходила за пределы */
+    margin-bottom: 0;
+    margin-top: 20px;
+}
+
+.regLabels p{
+    font-size: 14px;
+    font-style: italic;
+    line-height: 20px;
+    margin-top: 2px;
+    margin-bottom: 0;
+}
+
+.signIn{
+    font-size: 14px;
+    background-color: var(--cardsBg);
+    color: var(--darkText);
+    height: 26px;
+    margin-top: 0;
+    line-height: 26px;
+}
+
+input{
+    width: 90%;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--text);
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+input:focus{
+    outline-color: var(--accent);
+}
+
+#subText{
+    font-size: 12px;
+    margin-top: 3%;
+}
+
+.reg{
+    font-size: 20px;
+    background-color: var(--accent);
+    color: var(--bg);
+    margin-bottom: 0;
+    margin-top: 5%;
+    width: 50%;
+}
+
+.tab{
+    width: 100%;
+    margin-bottom: 0;
+}
