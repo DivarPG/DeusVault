@@ -1,12 +1,15 @@
 import 'swiper/css';
 import 'swiper/css/pagination';
+import AppHeader from "../components/appHeader.tsx";
+import Footer from "../components/footer.tsx";
 
 function SignInPage() {
 
     return (
         <>
             <section id="center">
-                <footer>2026@DeusVault</footer>
+                <AppHeader />
+                <Footer/>
             </section>
 
         </>

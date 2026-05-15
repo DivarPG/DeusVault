@@ -1,15 +1,17 @@
 import 'swiper/css';
 import 'swiper/css/pagination';
-import {Link} from "react-router-dom";
 import '../styles/registerPage.css';
+import '../components/appHeader.tsx';
+import AppHeader from "../components/appHeader.tsx";
+import Footer from "../components/footer.tsx";
+import ButtonLike from "../components/buttonLike.tsx";
 
 function RegisterPage() {
 
     return (
         <>
             <section id="center">
-                <h1 className="main-title">DeusVault</h1>
-                <hr/>
+                <AppHeader />
                 <div className="registration">
                     <div className="tab">
                         <div className="card registrationTab">
@@ -31,12 +33,9 @@ function RegisterPage() {
                                minLength={6} maxLength={10} required={true}/>
                         <button type={"submit"} className="button-like regButton reg">Зарегистрироваться</button>
                     </form>
-                    <p id="subText" className="subText">
-                        Уже есть аккаунт?
-                    </p>
-                    <Link className="button-like signIn" to="/signIn">Войти</Link>
+                    <ButtonLike text="Войти" to="/signIn" subText="Уже есть аккаунт?" className="signIn"/>
                 </div>
-                <footer>2026@DeusVault</footer>
+                <Footer/>
             </section>
 
         </>
