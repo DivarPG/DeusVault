@@ -5,13 +5,14 @@ import '../components/appHeader.tsx';
 import AppHeader from "../components/appHeader.tsx";
 import Footer from "../components/footer.tsx";
 import ButtonLike from "../components/buttonLike.tsx";
+import FormInput from "../components/formInput.tsx";
 
 function RegisterPage() {
 
     return (
         <>
             <section id="center">
-                <AppHeader />
+                <AppHeader/>
                 <div className="registration">
                     <div className="tab">
                         <div className="card registrationTab">
@@ -19,18 +20,12 @@ function RegisterPage() {
                         </div>
                     </div>
                     <form className="card registrationCard">
-                        <div className="regLabels">
-                            <label htmlFor="login">Логин</label>
-                            <p>от 5 до 10 латинских символов</p>
-                        </div>
-                        <input className="input" id="login" type="text"
-                               minLength={5} maxLength={10} required={true}/>
-                        <div className="regLabels">
-                            <label htmlFor="password">Пароль</label>
-                            <p>от 6 до 10 латинских символов и цифр</p>
-                        </div>
-                        <input className="input" id="password" type="password"
-                               minLength={6} maxLength={10} required={true}/>
+                        <FormInput label="Логин" id="login" type="text"
+                                   desc="от 5 до 10 латинских символов"
+                                   min={5} max={10}/>
+                        <FormInput label="Пароль" id="password" type="password"
+                                   desc="от 6 до 10 латинских символов и цифр"
+                                   min={6} max={10}/>
                         <button type={"submit"} className="button-like regButton reg">Зарегистрироваться</button>
                     </form>
                     <ButtonLike text="Войти" to="/signIn" subText="Уже есть аккаунт?" className="signIn"/>
