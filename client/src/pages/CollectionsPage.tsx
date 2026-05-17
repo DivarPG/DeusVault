@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import AppHeader from '../components/appHeader';
 import Footer from '../components/footer';
-import { getCollectionsFetch, createCollectionFetch, deleteCollectionFetch } from '../api/collections/collections.api';
-import type { Collection, CollectionTemplate } from '../api/collections/collections.dto';
+import {getCollectionsFetch, createCollectionFetch, deleteCollectionFetch} from '../api/collections/collections.api';
+import type {Collection, CollectionTemplate} from '../api/collections/collections.dto';
 import CreateCollectionForm from "../components/CreateCollectionForm.tsx";
+import CollectionTools from "../components/CollectionTools.tsx";
 
 function CollectionsPage() {
     const [collections, setCollections] = useState<Collection[]>([]);
@@ -12,7 +13,7 @@ function CollectionsPage() {
     const [error, setError] = useState('');
     const [showCreateForm, setShowCreateForm] = useState(false);
     const navigate = useNavigate();
-
+    const [search, setSearch] = useState('');
     // Загрузка коллекций
     const fetchCollections = async () => {
         setLoading(true);
@@ -61,41 +62,42 @@ function CollectionsPage() {
 
     return (
         <section id="center">
-            <AppHeader />
-            <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-                <h2>Мои коллекции</h2>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                {loading ? (
-                    <p>Загрузка...</p>
-                ) : collections.length === 0 ? (
-                    <p>У вас пока нет коллекций.</p>
-                ) : (
-                    <ul>
-                        {collections.map(c => (
-                            <li key={c.id} style={{ marginBottom: '10px' }}>
-                                <strong
-                                    style={{ cursor: 'pointer', marginRight: '15px' }}
-                                    onClick={() => navigate(`/collections/${c.id}`)}
-                                >
-                                    {c.name}
-                                </strong>
-                                {c.description && <span>– {c.description}</span>}
-                                <button
-                                    onClick={() => handleDelete(c.id)}
-                                    style={{ marginLeft: '15px', color: 'red', cursor: 'pointer' }}
-                                >
-                                    Удалить
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-                <button onClick={() => setShowCreateForm(!showCreateForm)} style={{ marginTop: '20px' }}>
-                    {showCreateForm ? 'Отмена' : 'Создать новую коллекцию'}
-                </button>
-                {showCreateForm && <CreateCollectionForm onSubmit={handleCreate} />}
-            </div>
-            <Footer />
+            <AppHeader/>
+
+            <CollectionTools search={search} onSearchChange={setSearch}
+                             onAddClick={() => setShowCreateForm(!showCreateForm)}/>
+            {error && <p style={{color: 'red'}}>{error}</p>}
+            {loading ? (
+                <p>Загрузка...</p>
+            ) : collections.length === 0 ? (
+                <p>У вас пока нет коллекций.</p>
+            ) : (
+                <ul>
+                    {collections.map(c => (
+                        <li key={c.id} style={{marginBottom: '10px'}}>
+                            <strong
+                                style={{cursor: 'pointer', marginRight: '15px'}}
+                                onClick={() => navigate(`/collections/${c.id}`)}
+                            >
+                                {c.name}
+                            </strong>
+                            {c.description && <span>– {c.description}</span>}
+                            <button
+                                onClick={() => handleDelete(c.id)}
+                                className="button-like"
+                            >
+                                Удалить
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            )}
+            <button onClick={() => setShowCreateForm(!showCreateForm)} className="button-like">
+                {showCreateForm ? 'Отмена' : 'Создать новую коллекцию'}
+            </button>
+            {showCreateForm && <CreateCollectionForm onSubmit={handleCreate}/>}
+
+            <Footer/>
         </section>
     );
 }
