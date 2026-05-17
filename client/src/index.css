@@ -113,7 +113,7 @@ footer {
 
 .tools {
     width: 40%;
-
+    margin-bottom: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -125,15 +125,6 @@ footer {
     background-color: var(--cardsBg);
 }
 
-@media (max-width: 1024px) {
-    .tools {
-        width: 90%;
-    }
-
-    .search-input {
-        width: 80%;
-    }
-}
 
 .filter-button{
     background-color: var(--cardsBg);
@@ -173,4 +164,36 @@ footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.collection-card{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: stretch;
+}
+
+.col-card-container{
+    width: 40%;
+}
+
+
+@media (max-width: 1024px) {
+    .tools {
+        width: 90%;
+    }
+
+    .col-card-container {
+        width: 90%;
+    }
+
+    .search-input {
+        width: 80%;
+    }
+
+    .collection-card{
+        width: 100%;
+        padding: 0;
+    }
 }
