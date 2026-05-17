@@ -1,15 +1,9 @@
-import { IsString, IsOptional, ValidateNested } from 'class-validator';
+import { IsDefined, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CollectionTemplateDto } from './collection-template.dto';
 
-export class CreateCollectionDto {
-  @IsString()
-  name: string;
-
-  @IsOptional()
-  @IsString()
-  description?: string;
-
+export class UpdateCollectionTemplateDto {
+  @IsDefined()
   @ValidateNested()
   @Type(() => CollectionTemplateDto)
   template: CollectionTemplateDto;
