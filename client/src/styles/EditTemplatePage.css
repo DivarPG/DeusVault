@@ -1,0 +1,118 @@
+.template-form{
+    width: 40%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.template-field-card{
+    background-color: var(--cardsBg);
+
+    border-radius: 15px;
+
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.template-field-card:not(:first-child){
+    margin-top: -10px;
+}
+
+.template-field-top{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.template-field-bottom{
+    display: flex;
+    gap: 10px;
+}
+
+.template-field-bottom .template-input{
+    flex: 1;
+}
+
+.template-select{
+    width: 180px;
+}
+
+.modal-divider{
+    margin: 0;
+}
+.template-field-card{
+    position: relative;
+
+    background-color: var(--cardsBg);
+
+    border-radius: 15px;
+
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+.template-field-card:not(:first-child){
+    margin-top: -10px;
+}
+
+.field-delete-row{
+    position: absolute;
+
+    top: 10px;
+    right: 10px;
+}
+
+.field-label-temp{
+    font-size: 20px;
+    color: var(--darkText);
+}
+
+.template-field-bottom{
+    display: flex;
+    gap: 10px;
+}
+
+.template-field-bottom .template-input{
+    flex: 1;
+}
+
+.modal-divider-2{
+    border: none;
+    height: 1px;
+    background-color: var(--text);
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.template-form input{
+    font-style: normal;
+    color: var(--darkText);
+}
+
+.template-form input::placeholder{
+    font-style: italic;
+    font-size: 14px;
+    color: var(--text);
+}
+
+@media (max-width: 1024px){
+
+    .template-form{
+        width: 90%;
+    }
+
+    .template-field-bottom{
+        flex-direction: column;
+    }
+
+    .template-select{
+        width: 100%;
+    }
+}

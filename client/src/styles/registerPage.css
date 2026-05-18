@@ -46,11 +46,11 @@
 }
 
 .regLabels{
-    width: 100%;
-    padding-left: 5%;          /* симметричные отступы слева и справа */
+    width: 100%;          /* симметричные отступы слева и справа */
     box-sizing: border-box;  /* чтобы ширина не выходила за пределы */
     margin-bottom: 0;
     margin-top: 20px;
+    margin-left: 5%;
 }
 
 .regLabels p{
@@ -71,12 +71,11 @@
 }
 
 input{
-    width: 90%;
+    width: 100%;
     font-size: 16px;
     font-style: italic;
     color: var(--text);
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 15px;
 }
 
 input:focus{

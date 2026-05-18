@@ -55,6 +55,7 @@ function SignInPage() {
                         max={10}
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        required ={true}
                     />
                     <FormInput
                         label="Пароль"
@@ -65,6 +66,7 @@ function SignInPage() {
                         max={10}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required ={true}
                     />
                     {error && <p style={{color: 'red'}}>{error}</p>}
                     <button type="submit" className="button-like regButton reg">

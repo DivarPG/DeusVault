@@ -1,96 +1,233 @@
 import { useState } from 'react';
-import type { CollectionTemplate } from '../api/collections/collections.dto';
+import type {
+    CollectionTemplate
+} from '../api/collections/collections.dto';
 
-interface Props {
+type Props = {
     template: CollectionTemplate;
-    onSubmit: (values: Record<string, unknown>) => Promise<void>;
-    onCancel: () => void;
-}
 
-function CreateItemForm({ template, onSubmit, onCancel }: Props) {
-    // Инициализируем значения: для boolean ставим false
-    const getInitialValues = () => {
+    onSubmit: (
+        values: Record<string, unknown>
+    ) => Promise<void>;
+
+    onCancel: () => void;
+};
+
+function CreateItemForm({
+                            template,
+                            onSubmit,
+                            onCancel
+                        }: Props) {
+
+    const createInitialValues = () => {
+
         const initial: Record<string, unknown> = {};
-        for (const field of template.fields) {
+
+        template.fields.forEach(field => {
+
             if (field.type === 'boolean') {
                 initial[field.name] = false;
             } else {
                 initial[field.name] = '';
             }
-        }
+
+        });
+
         return initial;
     };
 
-    const [values, setValues] = useState<Record<string, unknown>>(getInitialValues());
+    const [values, setValues] =
+        useState<Record<string, unknown>>(
+            createInitialValues()
+        );
+
     const [error, setError] = useState('');
 
-    const handleChange = (name: string, value: unknown) => {
-        setValues(prev => ({ ...prev, [name]: value }));
+    const handleChange = (
+        name: string,
+        value: unknown
+    ) => {
+
+        setValues(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
     };
 
-    const validateForm = (): boolean => {
+    const validate = () => {
+
         for (const field of template.fields) {
-            const val = values[field.name];
-            if (field.type === 'boolean') continue; // всегда валидно
-            if (val === undefined || val === null || val === '') {
-                setError(`Поле "${field.label || field.name}" обязательно для заполнения`);
+
+            const value = values[field.name];
+
+            if (field.type === 'boolean') {
+                continue;
+            }
+
+            if (
+                value === '' ||
+                value === undefined ||
+                value === null
+            ) {
+
+                setError(
+                    `Поле "${field.label}" обязательно`
+                );
+
                 return false;
             }
-            if (field.type === 'number' && isNaN(Number(val))) {
-                setError(`Поле "${field.label || field.name}" должно быть числом`);
+
+            if (
+                field.type === 'number' &&
+                isNaN(Number(value))
+            ) {
+
+                setError(
+                    `Поле "${field.label}" должно быть числом`
+                );
+
                 return false;
             }
         }
+
         setError('');
+
         return true;
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (
+        e: React.FormEvent<HTMLFormElement>
+    ) => {
+
         e.preventDefault();
-        if (!validateForm()) return;
+
+        if (!validate()) {
+            return;
+        }
 
         try {
+
             await onSubmit(values);
+
         } catch (err: unknown) {
-            if (err instanceof Error) setError(err.message);
-            else setError('Ошибка создания');
+
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Ошибка создания');
+            }
+
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} style={{ marginTop: '15px', background: '#f0f0f0', padding: '15px', borderRadius: '8px' }}>
-            <h4>Новый элемент</h4>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {template.fields.map(field => (
-                <div key={field.name} style={{ marginBottom: '10px' }}>
-                    <label>{field.label || field.name} *</label>
-                    {field.type === 'boolean' ? (
-                        <input
-                            type="checkbox"
-                            checked={!!values[field.name]}
-                            onChange={e => handleChange(field.name, e.target.checked)}
-                        />
-                    ) : field.type === 'date' ? (
-                        <input
-                            type="date"
-                            value={(values[field.name] as string) || ''}
-                            onChange={e => handleChange(field.name, e.target.value)}
-                            required
-                        />
-                    ) : (
-                        <input
-                            type={field.type === 'number' ? 'number' : 'text'}
-                            value={(values[field.name] as string) || ''}
-                            onChange={e => handleChange(field.name, field.type === 'number' ? Number(e.target.value) : e.target.value)}
-                            required
-                        />
-                    )}
-                </div>
-            ))}
-            <div>
-                <button type="submit">Добавить</button>
-                <button type="button" onClick={onCancel} style={{ marginLeft: '10px' }}>Отмена</button>
+        <form
+            onSubmit={handleSubmit}
+            className="collection-form card"
+        >
+
+            <h3 className="form-title">
+                Новый элемент
+            </h3>
+            <hr className="modal-divider"/>
+            {error && (
+                <p className="form-error">
+                    {error}
+                </p>
+            )}
+
+            <div className="form-section">
+
+                {template.fields.map(field => (
+
+                    <div
+                        key={field.name}
+                        className="item-field"
+                    >
+
+                        <label>
+                            {field.label}
+                        </label>
+
+                        {field.type === 'boolean' ? (
+
+                            <div className="checkbox-row">
+
+                                <input
+                                    type="checkbox"
+                                    checked={
+                                        Boolean(
+                                            values[field.name]
+                                        )
+                                    }
+                                    onChange={e =>
+                                        handleChange(
+                                            field.name,
+                                            e.target.checked
+                                        )
+                                    }
+                                />
+
+                                <span>
+                                    Да / Нет
+                                </span>
+
+                            </div>
+
+                        ) : (
+
+                            <input
+                                className="input"
+                                type={
+                                    field.type === 'number'
+                                        ? 'number'
+                                        : field.type === 'date'
+                                            ? 'date'
+                                            : 'text'
+                                }
+                                value={
+                                    String(
+                                        values[field.name] ?? ''
+                                    )
+                                }
+                                onChange={e =>
+                                    handleChange(
+                                        field.name,
+                                        field.type === 'number'
+                                            ? Number(e.target.value)
+                                            : e.target.value
+                                    )
+                                }
+                            />
+
+                        )}
+
+                    </div>
+
+                ))}
+
             </div>
+
+            <div className="form-buttons">
+
+                <button
+                    type="submit"
+                    className="button-like regButton"
+                >
+                    Создать
+                </button>
+
+                <button
+                    type="button"
+                    className="button-like cancel-button"
+                    onClick={onCancel}
+                >
+                    Отмена
+                </button>
+
+            </div>
+
         </form>
     );
 }

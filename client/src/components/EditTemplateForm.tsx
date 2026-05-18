@@ -1,5 +1,6 @@
-import {useState} from 'react';
-import type {CollectionTemplate} from '../api/collections/collections.dto';
+import { useState } from 'react';
+import type { FormEvent } from 'react';
+import type { CollectionTemplate } from '../api/collections/collections.dto';
 
 interface TemplateField {
     name: string;
@@ -13,7 +14,7 @@ interface Props {
     onCancel: () => void;
 }
 
-function EditTemplateForm({initialTemplate, onSave, onCancel}: Props) {
+function EditTemplateForm({ initialTemplate, onSave, onCancel }: Props) {
     const [fields, setFields] = useState<TemplateField[]>(initialTemplate.fields);
     const [error, setError] = useState('');
 
@@ -22,20 +23,20 @@ function EditTemplateForm({initialTemplate, onSave, onCancel}: Props) {
             setError('Максимум 30 полей');
             return;
         }
-        setFields([...fields, {name: '', type: 'text', label: ''}]);
+        setFields([...fields, { name: '', type: 'text', label: '' }]);
     };
 
     const updateField = (index: number, key: keyof TemplateField, value: string) => {
-        const updated = [...fields];
-        (updated[index] as any)[key] = value;
-        setFields(updated);
+        setFields(prev =>
+            prev.map((f, i) => (i === index ? { ...f, [key]: value } : f))
+        );
     };
 
     const removeField = (index: number) => {
-        setFields(fields.filter((_, i) => i !== index));
+        setFields(prev => prev.filter((_, i) => i !== index));
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError('');
 
@@ -53,7 +54,7 @@ function EditTemplateForm({initialTemplate, onSave, onCancel}: Props) {
         }
 
         try {
-            await onSave({fields});
+            await onSave({ fields });
         } catch (err: unknown) {
             if (err instanceof Error) setError(err.message);
             else setError('Ошибка сохранения');
@@ -61,42 +62,154 @@ function EditTemplateForm({initialTemplate, onSave, onCancel}: Props) {
     };
 
     return (
+
         <form
             onSubmit={handleSubmit}
-            style={{marginTop: '15px', background: '#f0f0f0', padding: '15px', borderRadius: '8px'}}
+            className="collection-form card template-form"
         >
-            <h4>Редактирование шаблона</h4>
-            {error && <p style={{color: 'red'}}>{error}</p>}
-            <p>Максимум 30 полей (сейчас {fields.length})</p>
-            {fields.map((field, idx) => (
-                <div key={idx} style={{display: 'flex', gap: '10px', marginBottom: '8px', alignItems: 'center'}}>
-                    <input
-                        placeholder="Имя поля (на латинице)"
-                        value={field.name}
-                        onChange={e => updateField(idx, 'name', e.target.value)}
-                        required
-                    />
-                    <select value={field.type} onChange={e => updateField(idx, 'type', e.target.value)}>
-                        <option value="text">текст</option>
-                        <option value="number">число</option>
-                        <option value="boolean">да/нет</option>
-                        <option value="date">дата</option>
-                        <option value="multiline">многострочный текст</option>
-                    </select>
-                    <input
-                        placeholder="Отображаемое название"
-                        value={field.label}
-                        onChange={e => updateField(idx, 'label', e.target.value)}
-                    />
-                    <button type="button" onClick={() => removeField(idx)}>✕</button>
-                </div>
-            ))}
-            <button type="button" onClick={addField} style={{marginBottom: '10px'}}>+ Добавить поле</button>
-            <div>
-                <button type="submit">Сохранить шаблон</button>
-                <button type="button" onClick={onCancel} style={{marginLeft: '10px'}}>Отмена</button>
+
+            <h3 className="form-title">
+                Редактирование шаблона
+            </h3>
+
+            <hr className="modal-divider"/>
+
+            {error && (
+                <p className="form-error">
+                    {error}
+                </p>
+            )}
+
+            <p className="subText">
+                Максимум 30 полей
+                ({fields.length}/30)
+            </p>
+
+            <div className="template-fields">
+
+                {fields.map((field, idx) => (
+
+                    <div
+                        key={idx}
+                        className="template-field-card"
+                    >
+
+                        <div className="field-delete-row">
+
+                            <button
+                                type="button"
+                                className="button-like delete-button"
+                                onClick={() => removeField(idx)}
+                            >
+                                ✕
+                            </button>
+
+                        </div>
+
+                        <label className="field-label-temp">
+                            Название поля (латиница)
+                        </label>
+
+                        <input
+                            className="input"
+                            placeholder="e.g. name, stored_amount, is_working"
+                            value={field.name}
+                            onChange={e =>
+                                updateField(
+                                    idx,
+                                    'name',
+                                    e.target.value
+                                )
+                            }
+                            required
+                        />
+
+
+                        <div className="template-field-bottom">
+
+                            <input
+                                className="input template-input"
+                                placeholder="Название поля"
+                                value={field.label}
+                                onChange={e =>
+                                    updateField(
+                                        idx,
+                                        'label',
+                                        e.target.value
+                                    )
+                                }
+                            />
+
+                            <select
+                                className="input template-select"
+                                value={field.type}
+                                onChange={e =>
+                                    updateField(
+                                        idx,
+                                        'type',
+                                        e.target.value
+                                    )
+                                }
+                            >
+                                <option value="text">
+                                    текст
+                                </option>
+
+                                <option value="number">
+                                    число
+                                </option>
+
+                                <option value="boolean">
+                                    да / нет
+                                </option>
+
+                                <option value="date">
+                                    дата
+                                </option>
+
+                                <option value="multiline">
+                                    многострочный текст
+                                </option>
+
+                            </select>
+
+                        </div>
+                        <hr className="modal-divider-2"/>
+                    </div>
+
+                ))}
+
             </div>
+
+            <button
+                type="button"
+                className="button-like add-template-button"
+                onClick={addField}
+            >
+                + Поле
+            </button>
+
+            <div className="form-buttons">
+
+                <button
+                    type="submit"
+                    className="button-like regButton"
+                >
+                    Сохранить
+                </button>
+
+                <button
+                    type="button"
+                    className="button-like cancel-button"
+                    onClick={onCancel}
+                >
+                    Отмена
+                </button>
+
+            </div>
+
         </form>
+
     );
 }
 

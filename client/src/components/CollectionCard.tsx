@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom';
-import type { Collection } from '../api/collections/collections.dto';
+import {useNavigate} from 'react-router-dom';
+import type {Collection} from '../api/collections/collections.dto';
 
 type ColCardProps = {
     collection: Collection;
@@ -14,15 +14,15 @@ function CollectionCard({
     const navigate = useNavigate();
 
     return (
-        <>
-            <div className="collection-card card">
+        <div className="collection-card card">
 
-                <h3
-                    className="collection-title"
-                    onClick={() =>
-                        navigate(`/collections/${collection.id}`)
-                    }
-                >
+            <div
+                className="collection-content"
+                onClick={() =>
+                    navigate(`/collections/${collection.id}`)
+                }
+            >
+                <h3 className="collection-title">
                     {collection.name}
                 </h3>
 
@@ -31,16 +31,16 @@ function CollectionCard({
                         {collection.description}
                     </p>
                 )}
-
-                <button
-                    onClick={() => onDelete(collection.id)}
-                    className="button-like"
-                >
-                    Удалить
-                </button>
-
             </div>
-        </>
+
+            <button
+                onClick={() => onDelete(collection.id)}
+                className="button-like delete-button"
+            >
+                ✕
+            </button>
+
+        </div>
     );
 }
 

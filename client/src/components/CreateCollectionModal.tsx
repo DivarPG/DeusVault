@@ -1,0 +1,28 @@
+interface ModalProps {
+    children: React.ReactNode;
+    onClose: () => void;
+}
+
+function Modal({
+                   children,
+                   onClose
+               }: ModalProps) {
+
+    return (
+        <div
+            className="modal-overlay"
+            onClick={onClose}
+        >
+
+            <div
+                className="card modal-content"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {children}
+            </div>
+
+        </div>
+    );
+}
+
+export default Modal;

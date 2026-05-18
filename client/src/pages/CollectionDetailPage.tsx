@@ -1,28 +1,44 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import {useCallback, useEffect, useState} from 'react';
+import {useParams, useNavigate} from 'react-router-dom';
+import '../styles/collectionDetailPage.css';
 import {
     getCollectionsFetch,
     addItemFetch,
     updateItemFetch,
     deleteItemFetch,
-    updateTemplateFetch,
 } from '../api/collections/collections.api';
-import type { Collection, CollectionItem, CollectionTemplate } from '../api/collections/collections.dto';
+import type {Collection, CollectionItem} from '../api/collections/collections.dto';
 import CreateItemForm from '../components/CreateItemForm';
-import EditItemForm from '../components/EditItemForm';
-import EditTemplateForm from '../components/EditTemplateForm';
+import ItemDetailsModal
+    from '../components/ItemDetailsModal';
+
+import EditItemModal
+    from '../components/EditItemModal';
+
+import CollectionItemCard
+    from '../components/CollectionItemCard';
+import AppHeader from "../components/appHeader.tsx";
+import CollectionTools from "../components/CollectionTools.tsx";
+import ContextNavigation from "../components/ContextNavigation.tsx";
+import Footer from "../components/footer.tsx";
+import Modal from "../components/CreateCollectionModal.tsx";
 
 function CollectionDetailPage() {
-    const { id } = useParams<{ id: string }>();
+    const [selectedItem, setSelectedItem] =
+        useState<CollectionItem | null>(null);
+
+    const [editingItem, setEditingItem] =
+        useState<CollectionItem | null>(null);
+    const [search, setSearch] = useState('');
+    const [showCreateForm, setShowCreateForm] =
+        useState(false);
+    const {id} = useParams<{ id: string }>();
     const [collection, setCollection] = useState<Collection | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [showCreateForm, setShowCreateForm] = useState(false);
-    const [showEditTemplate, setShowEditTemplate] = useState(false);
-    const [editingItem, setEditingItem] = useState<CollectionItem | null>(null);
     const navigate = useNavigate();
 
-    const fetchCollection = async () => {
+    const fetchCollection = useCallback(async () => {
         setLoading(true);
         setError('');
         try {
@@ -37,15 +53,15 @@ function CollectionDetailPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchCollection();
-    }, [id]);
+    }, [fetchCollection]);
 
     const handleCreateItem = async (values: Record<string, unknown>) => {
         if (!collection) return;
-        const res = await addItemFetch(collection.id, { status: 'owned', values });
+        const res = await addItemFetch(collection.id, {status: 'owned', values});
         if (!res.ok) {
             const err = await res.json().catch(() => ({}));
             throw new Error(err.message || 'Ошибка создания элемента');
@@ -56,7 +72,7 @@ function CollectionDetailPage() {
 
     const handleUpdateItem = async (
         itemId: string,
-        data: { status?: string; values?: Record<string, unknown> }
+        data: {values?: Record<string, unknown> }
     ) => {
         if (!collection) return;
         const res = await updateItemFetch(collection.id, itemId, data);
@@ -79,75 +95,98 @@ function CollectionDetailPage() {
         await fetchCollection();
     };
 
-    const handleUpdateTemplate = async (template: CollectionTemplate) => {
-        if (!collection) return;
-        const res = await updateTemplateFetch(collection.id, template);
-        if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(err.message || 'Ошибка обновления шаблона');
-        }
-        await fetchCollection();
-        setShowEditTemplate(false);
-    };
 
     if (loading) return <p>Загрузка...</p>;
-    if (error || !collection) return <p style={{ color: 'red' }}>{error || 'Коллекция не найдена'}</p>;
+    if (error || !collection) return <p style={{color: 'red'}}>{error || 'Коллекция не найдена'}</p>;
 
     return (
         <section id="center">
-            <h2>{collection.name}</h2>
-            {collection.description && <p>{collection.description}</p>}
-            <button onClick={() => setShowEditTemplate(!showEditTemplate)} style={{ marginTop: '10px' }}>
-                {showEditTemplate ? 'Закрыть' : 'Изменить шаблон'}
-            </button>
-            {showEditTemplate && (
-                <EditTemplateForm
-                    initialTemplate={collection.template as CollectionTemplate}
-                    onSave={handleUpdateTemplate}
-                    onCancel={() => setShowEditTemplate(false)}
-                />
+            <AppHeader/>
+            <ContextNavigation
+                items={[
+                    {label: collection.name, to: `/collections`},
+                    {label: 'Элементы'}
+                ]}
+            />
+            <CollectionTools search={search} onSearchChange={setSearch}
+                             onAddClick={() => setShowCreateForm(!showCreateForm)}/>
+            {collection.description && (
+                <p className="collection-description-full">
+                    {collection.description}
+                </p>
             )}
-            <h3>Элементы ({collection.items.length})</h3>
 
-            {collection.items.length === 0 && <p>Нет элементов</p>}
-            <ul>
+            <div className="collection-meta">
+
+                <span>
+                    Элементов: {collection.items.length}
+                </span>
+                <button
+                    className="button-like filter-button"
+                    onClick={() =>
+                        navigate(
+                            `/collections/${collection.id}/template`
+                        )
+                    }
+                >
+                    Редактировать шаблон
+                </button>
+
+            </div>
+
+            <br/>
+
+            <div className="items-container">
+
                 {collection.items.map(item => (
-                    <li key={item.id} style={{ marginBottom: '10px', border: '1px solid #ccc', padding: '8px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <strong>{item.status === 'owned' ? '✅' : '⭐'} Элемент</strong>
-                            <div>
-                                <button onClick={() => setEditingItem(item)}>✏️</button>
-                                <button onClick={() => handleDeleteItem(item.id)} style={{ color: 'red' }}>🗑️</button>
-                            </div>
-                        </div>
-                        <pre>{JSON.stringify(item.values, null, 2)}</pre>
-                        {editingItem?.id === item.id && (
-                            <EditItemForm
-                                key={item.id}
-                                template={collection.template}
-                                initialValues={item.values}
-                                initialStatus={item.status}
-                                onSave={(status, values) => handleUpdateItem(item.id, { status, values })}
-                                onCancel={() => setEditingItem(null)}
-                            />
-                        )}
-                    </li>
+                    <CollectionItemCard
+                        key={item.id}
+                        item={item}
+                        template={collection.template}
+                        onOpen={() => setSelectedItem(item)}
+                        onEdit={() => setEditingItem(item)}
+                        onDelete={() => handleDeleteItem(item.id)}
+                    />
                 ))}
-            </ul>
 
-            <button onClick={() => setShowCreateForm(!showCreateForm)} style={{ marginTop: '20px' }}>
-                {showCreateForm ? 'Отмена' : '+ Добавить элемент'}
-            </button>
-
+            </div>
             {showCreateForm && (
-                <CreateItemForm
+                <Modal
+                    onClose={() => setShowCreateForm(false)}
+                >
+                    <CreateItemForm
+                        template={collection.template}
+                        onSubmit={handleCreateItem}
+                        onCancel={() => setShowCreateForm(false)}
+                    />
+                </Modal>
+            )}
+            {selectedItem && (
+                <ItemDetailsModal
+                    item={selectedItem}
                     template={collection.template}
-                    onSubmit={handleCreateItem}
-                    onCancel={() => setShowCreateForm(false)}
+                    onClose={() => setSelectedItem(null)}
                 />
             )}
-
-            <button onClick={() => navigate('/collections')} style={{ marginTop: '20px' }}>← Назад к списку</button>
+            {editingItem && (
+                <EditItemModal
+                    item={editingItem}
+                    template={collection.template}
+                    onSave={(values) =>
+                        handleUpdateItem(
+                            editingItem.id,
+                            {values}
+                        )
+                    }
+                    onClose={() => setEditingItem(null)}
+                />
+            )}
+            <button className="button-like back"
+                    onClick={() => navigate('/collections')}
+            >
+                ←
+            </button>
+            <Footer/>
         </section>
     );
 }

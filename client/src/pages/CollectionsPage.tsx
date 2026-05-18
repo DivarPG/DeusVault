@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-//import {useNavigate} from 'react-router-dom';
+import '../styles/collectionsPage.css';
 import AppHeader from '../components/appHeader';
 import Footer from '../components/footer';
 import {getCollectionsFetch, createCollectionFetch, deleteCollectionFetch} from '../api/collections/collections.api';
@@ -7,6 +7,7 @@ import type {Collection, CollectionTemplate} from '../api/collections/collection
 import CreateCollectionForm from "../components/CreateCollectionForm.tsx";
 import CollectionTools from "../components/CollectionTools.tsx";
 import CollectionCard from "../components/CollectionCard.tsx";
+import Modal from "../components/CreateCollectionModal.tsx";
 
 function CollectionsPage() {
     const [collections, setCollections] = useState<Collection[]>([]);
@@ -83,10 +84,18 @@ function CollectionsPage() {
                     ))}
                 </div>
             )}
-            <button onClick={() => setShowCreateForm(!showCreateForm)} className="button-like">
-                {showCreateForm ? 'Отмена' : 'Создать новую коллекцию'}
-            </button>
-            {showCreateForm && <CreateCollectionForm onSubmit={handleCreate}/>}
+            {showCreateForm && (
+                <Modal
+                    onClose={() => setShowCreateForm(false)}
+                >
+                    <CreateCollectionForm
+                        onSubmit={handleCreate}
+                        onCancel={() =>
+                            setShowCreateForm(false)
+                        }
+                    />
+                </Modal>
+            )}
 
             <Footer/>
         </section>

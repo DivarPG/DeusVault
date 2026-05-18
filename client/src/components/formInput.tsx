@@ -7,9 +7,10 @@ interface FormInputProps {
     max?: number;
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    required?: boolean;
 }
 
-function FormInput({label, id, desc, type, min, max, value, onChange}: FormInputProps) {
+function FormInput({label, id, desc, type, min, max, value, onChange, required}: FormInputProps) {
     return (
         <>
             <div className="regLabels">
@@ -24,7 +25,7 @@ function FormInput({label, id, desc, type, min, max, value, onChange}: FormInput
                 onChange={onChange}
                 minLength={min}
                 maxLength={max}
-                required
+                required = {required}
             />
         </>
     );
