@@ -22,6 +22,8 @@ import CollectionTools from "../components/CollectionTools.tsx";
 import ContextNavigation from "../components/ContextNavigation.tsx";
 import Footer from "../components/footer.tsx";
 import Modal from "../components/CreateCollectionModal.tsx";
+import { uploadItemImageFetch }
+    from '../api/collections/collections.api';
 
 function CollectionDetailPage() {
     const [selectedItem, setSelectedItem] =
@@ -58,6 +60,38 @@ function CollectionDetailPage() {
     useEffect(() => {
         fetchCollection();
     }, [fetchCollection]);
+
+    const handleUploadImage = async (
+        itemId: string,
+        file: File
+    ) => {
+
+        if (!collection) {
+            return;
+        }
+
+        const res =
+            await uploadItemImageFetch(
+                collection.id,
+                itemId,
+                file
+            );
+
+        if (!res.ok) {
+
+            const err =
+                await res.json().catch(() => ({}));
+
+            alert(
+                err.message ||
+                'Ошибка загрузки изображения'
+            );
+
+            return;
+        }
+
+        await fetchCollection();
+    };
 
     const handleCreateItem = async (values: Record<string, unknown>) => {
         if (!collection) return;
@@ -143,9 +177,18 @@ function CollectionDetailPage() {
                         key={item.id}
                         item={item}
                         template={collection.template}
+
                         onOpen={() => setSelectedItem(item)}
+
                         onEdit={() => setEditingItem(item)}
-                        onDelete={() => handleDeleteItem(item.id)}
+
+                        onDelete={() =>
+                            handleDeleteItem(item.id)
+                        }
+
+                        onUploadImage={(file) =>
+                            handleUploadImage(item.id, file)
+                        }
                     />
                 ))}
 
