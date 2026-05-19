@@ -63,6 +63,25 @@ export const updateItemFetch = (collectionId: string, itemId: string, data: {
     });
 };
 
+export const uploadItemImageFetch = async (
+    collectionId: string,
+    itemId: string,
+    file: File
+): Promise<Response> => {
+    const url = `${BASE_URL}/collections/${collectionId}/items/${itemId}/image`;
+    const token = localStorage.getItem(STORAGE_KEYS.JWT_TOKEN);
+    const formData = new FormData();
+    formData.append('image', file);
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+        body: formData,
+    });
+};
+
 export const deleteItemFetch = (collectionId: string, itemId: string): Promise<Response> => {
     const url = `${BASE_URL}/collections/${collectionId}/items/${itemId}`;
     return fetch(url, {

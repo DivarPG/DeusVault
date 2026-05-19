@@ -21,6 +21,7 @@ export interface CollectionItem {
     id: string;
     status: 'owned' | 'wanted';
     values: Record<string, unknown>;
+    image?: string;
     collectionId: string;
     createdAt: string;
     updatedAt: string;
