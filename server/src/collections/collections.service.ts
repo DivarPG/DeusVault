@@ -138,9 +138,12 @@ export class CollectionsService {
     });
     if (!item) throw new NotFoundException('Item not found');
 
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    const fullUrl = `${baseUrl}${imagePath}`;
+
     return this.prisma.collectionItem.update({
       where: { id: itemId },
-      data: { image: imagePath },
+      data: { image: fullUrl },
     });
   }
 
