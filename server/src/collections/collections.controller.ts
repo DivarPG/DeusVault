@@ -10,6 +10,9 @@ import {
   HttpStatus,
   UseGuards,
   Req,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { CollectionsService } from './collections.service';
 import { CreateCollectionDto } from './dto/create-collection.dto';
@@ -18,6 +21,9 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { AuthenticatedRequest } from '../auth/request.interface';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { UpdateCollectionTemplateDto } from './dto/update-collection-template.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('collections')
 @UseGuards(JwtAuthGuard)
@@ -67,6 +73,48 @@ export class CollectionsController {
   ) {
     const userId = req.user.userId;
     return this.collectionsService.addItem(collectionId, dto, userId);
+  }
+
+  @Post(':collectionId/items/:itemId/image')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          cb(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+          return cb(
+            new BadRequestException('Only image files are allowed!'),
+            false,
+          );
+        }
+        cb(null, true);
+      },
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
+  async uploadItemImage(
+    @Param('collectionId') collectionId: string,
+    @Param('itemId') itemId: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.userId;
+    const imagePath = `/uploads/${file.filename}`;
+    await this.collectionsService.updateItemImage(
+      collectionId,
+      itemId,
+      userId,
+      imagePath,
+    );
+    return { imageUrl: imagePath };
   }
 
   @Patch(':collectionId/items/:itemId')

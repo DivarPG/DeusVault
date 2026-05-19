@@ -36,6 +36,7 @@ model CollectionItem {
   id           String     @id @default(cuid())
   status       String // 'owned' | 'wanted'
   values       Json
+  image        String? // путь к загруженному изображению
   collectionId String
   collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   createdAt    DateTime   @default(now())

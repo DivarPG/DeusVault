@@ -127,6 +127,23 @@ export class CollectionsService {
     });
   }
 
+  async updateItemImage(
+    collectionId: string,
+    itemId: string,
+    userId: string,
+    imagePath: string,
+  ) {
+    const item = await this.prisma.collectionItem.findFirst({
+      where: { id: itemId, collection: { id: collectionId, userId } },
+    });
+    if (!item) throw new NotFoundException('Item not found');
+
+    return this.prisma.collectionItem.update({
+      where: { id: itemId },
+      data: { image: imagePath },
+    });
+  }
+
   async deleteItem(collectionId: string, itemId: string, userId: string) {
     const item = await this.prisma.collectionItem.findFirst({
       where: {
