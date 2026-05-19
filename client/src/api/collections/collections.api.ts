@@ -15,6 +15,16 @@ export const getCollectionsFetch = (): Promise<Response> => {
     return fetch(url, {
         method: 'GET',
         headers: authHeaders(),
+        cache: 'no-store',
+    });
+};
+
+export const getCollectionFetch = (id: string): Promise<Response> => {
+    const url = `${BASE_URL}/collections/${id}`;
+    return fetch(url, {
+        method: 'GET',
+        headers: authHeaders(),
+        cache: 'no-store',
     });
 };
 

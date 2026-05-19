@@ -3,6 +3,7 @@ import type {
     CollectionTemplate
 } from '../api/collections/collections.dto';
 import {useRef} from "react";
+import {BASE_URL} from '../api/baseUrl';
 
 type Props = {
     item: CollectionItem;
@@ -28,6 +29,11 @@ function CollectionItemCard({
                                 onDelete,
                                 onUploadImage
                             }: Props) {
+    const imageSrc = item.image
+        ? (item.image.startsWith('http')
+            ? item.image
+            : `${BASE_URL}${item.image}`)
+        : '';
 
     const fileInputRef =
         useRef<HTMLInputElement>(null);
@@ -58,7 +64,7 @@ function CollectionItemCard({
                 <div className="item-image-wrapper">
 
                     <img
-                        src={item.image}
+                        src={imageSrc}
                         alt="Изображение"
                         className="item-image"
                     />

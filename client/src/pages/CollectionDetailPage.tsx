@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import '../styles/collectionDetailPage.css';
 import {
-    getCollectionsFetch,
+    getCollectionFetch,
     addItemFetch,
     updateItemFetch,
     deleteItemFetch,
@@ -41,14 +41,18 @@ function CollectionDetailPage() {
     const navigate = useNavigate();
 
     const fetchCollection = useCallback(async () => {
+        if (!id) {
+            setError('Коллекция не найдена');
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         setError('');
         try {
-            const res = await getCollectionsFetch();
+            const res = await getCollectionFetch(id);
             if (!res.ok) throw new Error('Ошибка загрузки');
-            const cols: Collection[] = await res.json();
-            const col = cols.find(c => c.id === id);
-            if (!col) throw new Error('Коллекция не найдена');
+            const col: Collection = await res.json();
             setCollection(col);
         } catch (err: unknown) {
             if (err instanceof Error) setError(err.message);

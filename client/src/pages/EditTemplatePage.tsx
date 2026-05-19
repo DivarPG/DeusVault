@@ -3,14 +3,11 @@ import { useParams, useNavigate }
     from 'react-router-dom';
 
 import {
-    getCollectionsFetch,
+    getCollectionFetch,
     updateTemplateFetch
 } from '../api/collections/collections.api';
 
-import type {
-    Collection,
-    CollectionTemplate
-} from '../api/collections/collections.dto';
+import type { Collection, CollectionTemplate } from '../api/collections/collections.dto';
 
 import EditTemplateForm
     from '../components/EditTemplateForm';
@@ -31,19 +28,12 @@ function EditTemplatePage() {
     useEffect(() => {
 
         const fetchCollection = async () => {
+            if (!id) return;
+            const res = await getCollectionFetch(id);
+            if (!res.ok) return;
+            const col: Collection = await res.json();
+            setCollection(col);
 
-            const res =
-                await getCollectionsFetch();
-
-            const cols: Collection[] =
-                await res.json();
-
-            const col =
-                cols.find(c => c.id === id);
-
-            if (col) {
-                setCollection(col);
-            }
         };
 
         fetchCollection();

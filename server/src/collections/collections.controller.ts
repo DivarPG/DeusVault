@@ -24,6 +24,7 @@ import { UpdateCollectionTemplateDto } from './dto/update-collection-template.dt
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { resolveUploadsDir } from '../utils/uploads-path';
 
 @Controller('collections')
 @UseGuards(JwtAuthGuard)
@@ -79,7 +80,10 @@ export class CollectionsController {
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: './uploads',
+        destination: (req, file, cb) => {
+          const uploadsDir = resolveUploadsDir();
+          cb(null, uploadsDir);
+        },
         filename: (req, file, cb) => {
           const randomName = Array(32)
             .fill(null)
